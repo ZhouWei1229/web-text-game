@@ -2,86 +2,77 @@
   <div class="container">
     <div class="header">
       <div class="left">
-        <el-button type="primary" round>{{ buttonText.menu }}</el-button>
+        <el-button type="primary" round class="menu-button">{{
+          buttonText.menu
+        }}</el-button>
       </div>
       <div class="right">
-        <el-button type="primary" round>{{ buttonText.settings }}</el-button>
+        <el-button type="primary" round class="settings-button">{{
+          buttonText.settings
+        }}</el-button>
       </div>
     </div>
+
     <div class="content">
       <div class="description-box">
         {{ descriptionText }}
       </div>
     </div>
-    <!-- A按钮点击后显示模态框 -->
-    <div class="A">
-      <el-button type="primary" round @click="showModal('NationalAffairs')">
-        {{ buttonText.NationalAffairs }}
-      </el-button>
-    </div>
 
-    <!-- B按钮点击后显示模态框 -->
-    <div class="B">
-      <el-button type="primary" round @click="showModal('Harem')">
-        {{ buttonText.Harem }}
-      </el-button>
-    </div>
-
-    <!-- C按钮点击后显示模态框 -->
-    <div class="C">
-      <el-button type="primary" round @click="showModal('Offspring')">
-        {{ buttonText.Offspring }}
-      </el-button>
-    </div>
-
-    <!-- D按钮点击后显示模态框 -->
-    <div class="D">
-      <el-button type="primary" round @click="showModal('SecretPolice')">
-        {{ buttonText.SecretPolice }}
-      </el-button>
-    </div>
-
-    <!-- 模态框 -->
-    <el-dialog
-      :visible="modalVisible"
-      :title="modalTitle"
-      @close="closeModal"
-      width="60%"
-    >
-      <p>{{ modalContent }}</p>
-    </el-dialog>
     <div class="footer">
-      <ul>
-        <li v-for="(value, ability) in characterAbilities" :key="ability">
+      <div v-for="(value, ability) in characterAbilities" :key="ability">
+        <div class="ability">
           <span class="ability-name">{{ abilityText[ability] }}:</span>
           <span class="ability-value">{{ value }}</span>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
-    <el-button type="text" @click="dialogVisible = true"
-      >点击打开 Dialog</el-button
-    >
-    <CustomModal
-      title="提示"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <span>这是一段信息</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
-          >确定</el-button
-        >
-      </span>
-    </CustomModal>
+    <div class="btn-group">
+      <div class="button-group-item">
+        <el-button type="primary" @click="showModal('NationalAffairs')">
+          {{ buttonText.NationalAffairs }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary" @click="showModal('Harem')">
+          {{ buttonText.Harem }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary" @click="showModal('Offspring')">
+          {{ buttonText.Offspring }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary" @click="showModal('SecretPolice')">
+          {{ buttonText.SecretPolice }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary" @click="showModal('DirectMessage')">
+          {{ buttonText.DirectMessage }}
+        </el-button>
+      </div>
+    </div>
+
+    <div>
+      <Modal
+        :title="modalTitle"
+        :triggerText="modalContent"
+        :visible="modalVisible"
+        @update:visible="modalVisible = $event"
+      >
+        <!-- 这里可以插入 Modal 内容 -->
+        <p>这是一个示例的 Bootstrap Modal。</p>
+      </Modal>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from "vuex";
-import CustomModal from "./components/Modal.vue"; // 请根据您的项目结构调整路径
+import Modal from "./components/Modal.vue"; // 请根据你的目录结构调整路径
 export default {
   data() {
     return {
@@ -92,6 +83,7 @@ export default {
         Harem: "後宮",
         Offspring: "子嗣",
         SecretPolice: "東廠",
+        DirectMessage: "私信",
       },
       descriptionText: "這是一些繁體中文描述。",
       abilityText: {
@@ -105,24 +97,16 @@ export default {
       modalVisible: false,
       modalTitle: "",
       modalContent: "",
-      dialogVisible: false,
     };
   },
   components: {
-    CustomModal,
+    Modal,
   },
   computed: {
     ...mapState(["characterAbilities"]),
   },
   methods: {
     ...mapMutations(["updateAbility"]),
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
     // 显示模态框
     showModal(eventType) {
       console.log("Button clicked:", eventType); // 检查按钮是否被点击
@@ -206,6 +190,51 @@ export default {
 </script>
 
 <style scoped>
+/* 菜单按钮样式 */
+.menu-button {
+  background-color: #4caf50; /* 背景颜色 */
+  border: none; /* 去除按钮边框 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加按钮阴影 */
+  font-size: 16px; /* 文字大小 */
+  padding: 10px 20px; /* 按钮内边距 */
+  color: white; /* 文字颜色 */
+}
+
+/* 设置按钮样式 */
+.settings-button {
+  background-color: #ff5722; /* 背景颜色 */
+  border: none; /* 去除按钮边框 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加按钮阴影 */
+  font-size: 16px; /* 文字大小 */
+  padding: 10px 20px; /* 按钮内边距 */
+  color: white; /* 文字颜色 */
+}
+/* 按钮组容器样式 */
+.btn-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+/* 按钮样式 */
+.button-group-item {
+  margin: 0 10px; /* 按钮之间的水平间距 */
+}
+
+.el-button {
+  background-color: #007acc; /* 按钮背景颜色 */
+  color: white; /* 文字颜色 */
+  border: none; /* 去除按钮边框 */
+  border-radius: 20px; /* 圆角边框 */
+  padding: 10px 20px; /* 按钮内边距 */
+  font-size: 16px; /* 文字大小 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加按钮阴影 */
+  transition: background-color 0.3s; /* 添加背景颜色变化的过渡效果 */
+}
+
+.el-button:hover {
+  background-color: #00568c; /* 鼠标悬停时的背景颜色 */
+}
 .container {
   font-family: "Helvetica Neue", sans-serif;
   padding: 20px;
@@ -247,17 +276,28 @@ export default {
 .A,
 .B,
 .C,
-.D {
-  flex: 1;
+.D,
+.E {
   margin-right: 10px;
 }
 
 button {
   width: 100%;
+  border-radius: 20px;
 }
 
 .footer {
   margin-top: 20px;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(6, 1fr);
+
+  .ability {
+    background: #b3d6ff63;
+    width: fit-content;
+    padding: 8px 15px;
+    border-radius: 20px;
+  }
 }
 
 ul {
