@@ -18,6 +18,33 @@
         {{ descriptionText }}
       </div>
     </div>
+    <div class="btn-group">
+      <div class="button-group-item">
+        <el-button type="primary">
+          {{ buttonText.NationalAffairs }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary">
+          {{ buttonText.Harem }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary">
+          {{ buttonText.Offspring }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary">
+          {{ buttonText.SecretPolice }}
+        </el-button>
+      </div>
+      <div class="button-group-item">
+        <el-button type="primary">
+          {{ buttonText.DirectMessage }}
+        </el-button>
+      </div>
+    </div>
 
     <div class="footer">
       <div v-for="(value, ability) in characterAbilities" :key="ability">
@@ -28,51 +55,41 @@
       </div>
     </div>
 
-    <div class="btn-group">
-      <div class="button-group-item">
-        <el-button type="primary" @click="showModal('NationalAffairs')">
-          {{ buttonText.NationalAffairs }}
-        </el-button>
+    <div class="info-group">
+      <div>
+        <div v-for="(consort, index) in consortsWithStyles" :key="index">
+          <div class="consort">
+            <div class="ability">
+              <span class="ability-name">{{ consort.name }}</span>
+              <div class="ability-details">
+                <span :class="consort.styleClasses + ' ability-details'">
+                  {{ consort.description }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="button-group-item">
-        <el-button type="primary" @click="showModal('Harem')">
-          {{ buttonText.Harem }}
-        </el-button>
+      <div>
+        <div v-for="(minister, index) in ministersWithStyles" :key="index">
+          <div class="minister">
+            <div class="ability">
+              <span class="ability-name">{{ minister.name }}</span>
+              <div class="ability-details">
+                <span :class="minister.styleClasses + ' ability-details'">
+                  {{ minister.description }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="button-group-item">
-        <el-button type="primary" @click="showModal('Offspring')">
-          {{ buttonText.Offspring }}
-        </el-button>
-      </div>
-      <div class="button-group-item">
-        <el-button type="primary" @click="showModal('SecretPolice')">
-          {{ buttonText.SecretPolice }}
-        </el-button>
-      </div>
-      <div class="button-group-item">
-        <el-button type="primary" @click="showModal('DirectMessage')">
-          {{ buttonText.DirectMessage }}
-        </el-button>
-      </div>
-    </div>
-
-    <div>
-      <Modal
-        :title="modalTitle"
-        :triggerText="modalContent"
-        :visible="modalVisible"
-        @update:visible="modalVisible = $event"
-      >
-        <!-- 这里可以插入 Modal 内容 -->
-        <p>这是一个示例的 Bootstrap Modal。</p>
-      </Modal>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
-import Modal from "./components/Modal.vue"; // 请根据你的目录结构调整路径
+import { mapActions, mapMutations, mapState } from "vuex";
 export default {
   data() {
     return {
@@ -93,103 +110,59 @@ export default {
         Health: "健康",
         Prestige: "聲望",
         Stamina: "體力",
+        Power: "權力",
       },
       modalVisible: false,
       modalTitle: "",
       modalContent: "",
     };
   },
-  components: {
-    Modal,
-  },
+  components: {},
   computed: {
-    ...mapState(["characterAbilities"]),
+    ...mapState(["characterAbilities", "consorts", "ministers"]),
+    consortsWithStyles() {
+      return this.consorts.map((consort, index) => {
+        const description = `外表:${consort.Appearance}, 智力:${consort.Intelligence}, 軍事:${consort.Military}, 信任度:${consort.Trust}, 懷疑度:${consort.Suspicion}, 權勢:${consort.Power}`;
+        return {
+          name: `妃子：${consort.Name}`,
+          description,
+          styleClasses: {
+            "ability-value-label": true,
+            "ability-value": true,
+          },
+        };
+      });
+    },
+    ministersWithStyles() {
+      return this.ministers.map((minister, index) => {
+        const description = `外表:${minister.Appearance}, 智力:${minister.Intelligence}, 軍事:${minister.Military}, 信任度:${minister.Trust}, 懷疑度:${minister.Suspicion}, 權勢:${minister.Power}`;
+        return {
+          name: `大臣：${minister.Name}`,
+          description,
+          styleClasses: {
+            "ability-value-label": true,
+            "ability-value": true,
+          },
+        };
+      });
+    },
   },
   methods: {
-    ...mapMutations(["updateAbility"]),
-    // 显示模态框
-    showModal(eventType) {
-      console.log("Button clicked:", eventType); // 检查按钮是否被点击
-      this.modalVisible = true;
-      this.modalTitle = this.buttonText[eventType];
-      switch (eventType) {
-        case "NationalAffairs":
-          this.modalContent = "您已處理國家事務。";
-          break;
-        case "Harem":
-          this.modalContent = "您已訪問後宮。";
-          break;
-        case "Offspring":
-          this.modalContent = "您已有子嗣。";
-          break;
-        case "SecretPolice":
-          this.modalContent = "您已與東廠互動。";
-          break;
-        default:
-          this.modalContent = "這是一些內容。";
-      }
-    },
-
-    // 关闭模态框
-    closeModal() {
-      this.modalVisible = false;
-    },
-    simulateEvent(eventType) {
-      // 创建一个包含所有能力的列表，除了 Stamina
-      const abilities = [
-        "Appearance",
-        "Intelligence",
-        "Military",
-        "Health",
-        "Prestige",
-      ];
-
-      // 创建一个对象来存储新的能力值
-      const newAbilities = {};
-
-      // 遍历能力列表并为每个能力生成随机值
-      abilities.forEach((ability) => {
-        newAbilities[ability] = Math.floor(Math.random() * 100);
-      });
-
-      // 保持 Stamina 不变
-      newAbilities.Stamina = this.$store.state.characterAbilities.Stamina;
-
-      // 更新所有能力
-      abilities.forEach((ability) => {
-        this.$store.commit("updateAbility", {
-          ability,
-          value: newAbilities[ability],
-        });
-      });
-
-      // 根据事件类型更新描述文本
-      switch (eventType) {
-        case "NationalAffairs":
-          this.descriptionText = "您已處理國家事務。";
-          break;
-        case "Harem":
-          this.descriptionText = "您已訪問後宮。";
-          break;
-        case "Offspring":
-          this.descriptionText = "您已有子嗣。";
-          break;
-        case "SecretPolice":
-          this.descriptionText = "您已與東廠互動。";
-          break;
-        default:
-          this.descriptionText = "這是一些內容。";
-      }
-    },
+    ...mapMutations(["updateAbility"]), // 将 updateAbility 映射到组件中的方法
+    ...mapActions(["initializeNPC"]),
   },
   mounted() {
-    // 在组件创建时触发一次随机生成事件
-    this.simulateEvent();
+    this.initializeNPC(); //新增大臣與妃子
+    this.updateAbility(); //重製角色的數值
   },
 };
 </script>
 
 <style scoped>
+.info-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
 /* 菜单按钮样式 */
 .menu-button {
   background-color: #4caf50; /* 背景颜色 */
@@ -293,11 +266,22 @@ button {
   grid-template-columns: repeat(6, 1fr);
 
   .ability {
+    margin: 8px 4px;
     background: #b3d6ff63;
     width: fit-content;
     padding: 8px 15px;
     border-radius: 20px;
   }
+}
+
+.ability-details {
+  background: #b3d6ff63;
+  width: fit-content;
+  padding: 8px 15px;
+  border-radius: 9px;
+  margin: 12px 8px;
+  font-weight: bold;
+  color: #00168c;
 }
 
 ul {

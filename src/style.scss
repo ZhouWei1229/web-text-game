@@ -2,6 +2,12 @@ body {
   margin: 0;
   padding:0;
 
+span{
+  font-weight: bold;
+  font-family: cursive;
+}
+
+
   #app {
     display: grid;
     grid-template-rows: 60px 1fr 60px 1fr;

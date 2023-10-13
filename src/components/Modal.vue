@@ -17,16 +17,7 @@ export default {
       required: true,
     },
   },
-  computed: {
-    showModal: {
-      get() {
-        return this.visible;
-      },
-      set(value) {
-        this.$emit("update:visible", value);
-      },
-    },
-  },
+  computed: {},
   methods: {
     toggleModal() {
       this.showModal = !this.showModal;
